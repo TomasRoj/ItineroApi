@@ -2,6 +2,8 @@
 using System.Configuration;
 using Microsoft.EntityFrameworkCore;
 using ItineroApi.Models;
+using JWT.Algorithms;
+using JWT.Builder;
 
 namespace ItineroApi
 {
@@ -31,24 +33,33 @@ namespace ItineroApi
                 );
             });
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAngularApp",
+                    builder => builder
+                        .WithOrigins("http://localhost:4200") // <-- adresa Angular appky
+                        .AllowAnyHeader()
+                        .AllowAnyMethod());
+            });
+
+
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
+                // Configure the HTTP request pipeline.
+                if (app.Environment.IsDevelopment())
+                {
+                    app.UseSwagger();
+                    app.UseSwaggerUI();
+                }
+
+                app.UseAuthorization();
+
+                // Enable CORS
+                app.UseCors();
+                app.UseCors("AllowAngularApp");
+                app.MapControllers();
+
+                app.Run();
             }
-
-            app.UseAuthorization();
-
-            // Enable CORS
-            app.UseCors();
-
-            app.MapControllers();
-
-            app.Run();
-        }
     }
     }
-
