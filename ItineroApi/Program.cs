@@ -1,4 +1,8 @@
 
+using System.Configuration;
+using Microsoft.EntityFrameworkCore;
+using ItineroApi.Models;
+
 namespace ItineroApi
 {
     public class Program
@@ -14,6 +18,19 @@ namespace ItineroApi
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            // SETUP CORS
+            builder.Services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin()
+                               .AllowAnyHeader()
+                               .AllowAnyMethod();
+                    }
+                );
+            });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -25,10 +42,13 @@ namespace ItineroApi
 
             app.UseAuthorization();
 
+            // Enable CORS
+            app.UseCors();
 
             app.MapControllers();
 
             app.Run();
         }
     }
-}
+    }
+
