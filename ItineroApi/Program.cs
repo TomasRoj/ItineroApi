@@ -4,6 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using ItineroApi.Models;
 using JWT.Algorithms;
 using JWT.Builder;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace ItineroApi
 {
@@ -13,7 +16,6 @@ namespace ItineroApi
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -33,14 +35,17 @@ namespace ItineroApi
                 );
             });
 
-            builder.Services.AddCors(options =>
-            {
-                options.AddPolicy("AllowAngularApp", builder => builder
-                        .AllowAnyOrigin() // <-- jsem musel zmenit
-                        .AllowAnyHeader()
-                        .AllowAnyMethod());
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+                    };
             });
-
 
             var app = builder.Build();
 
@@ -53,12 +58,14 @@ namespace ItineroApi
 
                 app.UseAuthorization();
 
-                // Enable CORS
-                app.UseCors();
-                app.UseCors("AllowAngularApp");
-                app.MapControllers();
+            // Enable CORS
+            app.UseHttpsRedirection();
+            app.UseCors();
+            app.UseAuthentication();
+            app.UseAuthorization();
+            app.MapControllers();
 
-                app.Run();
+            app.Run();
             }
     }
     }
