@@ -1,8 +1,10 @@
 ﻿using ItineroApi.Models;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ItineroApi.Controllers
 {
+    [EnableCors("AllowAngularApp")]
     [ApiController]
     [Route("api/[controller]")]
     public class TripsController : ControllerBase

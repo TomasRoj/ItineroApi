@@ -1,4 +1,4 @@
-
+using Microsoft.AspNetCore.Cors;
 using System.Configuration;
 using Microsoft.EntityFrameworkCore;
 using ItineroApi.Models;
@@ -35,9 +35,8 @@ namespace ItineroApi
 
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy("AllowAngularApp",
-                    builder => builder
-                        .WithOrigins("http://localhost:4200") // <-- adresa Angular appky
+                options.AddPolicy("AllowAngularApp", builder => builder
+                        .AllowAnyOrigin() // <-- jsem musel zmenit
                         .AllowAnyHeader()
                         .AllowAnyMethod());
             });
