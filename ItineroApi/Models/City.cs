@@ -14,5 +14,6 @@ namespace ItineroApi.Models
         public decimal? Longitude { get; set; }
         public DateTime Created_at { get; set; }
         public DateTime Updated_at { get; set; }
+        public string? PhotoURL { get; set; }
     }
 }
