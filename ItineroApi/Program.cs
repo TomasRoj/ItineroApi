@@ -15,8 +15,6 @@ namespace ItineroApi
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
-
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -25,14 +23,13 @@ namespace ItineroApi
             // SETUP CORS
             builder.Services.AddCors(options =>
             {
-                options.AddDefaultPolicy(
-                    builder =>
+                options.AddPolicy("AllowAngular",
+                    policy =>
                     {
-                        builder.AllowAnyOrigin()
-                               .AllowAnyHeader()
-                               .AllowAnyMethod();
-                    }
-                );
+                        policy.WithOrigins("http://localhost:4200") // Angular port
+                              .AllowAnyHeader()
+                              .AllowAnyMethod();
+                    });
             });
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -45,27 +42,26 @@ namespace ItineroApi
                         ValidateIssuerSigningKey = true,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
                     };
-            });
+                });
 
             var app = builder.Build();
 
-                // Configure the HTTP request pipeline.
-                if (app.Environment.IsDevelopment())
-                {
-                    app.UseSwagger();
-                    app.UseSwaggerUI();
-                }
+            // Configure the HTTP request pipeline.
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            }
 
-                app.UseAuthorization();
-
-            // Enable CORS
+            app.UseCors("AllowAngular");
             app.UseHttpsRedirection();
-            app.UseCors();
+
             app.UseAuthentication();
             app.UseAuthorization();
+
             app.MapControllers();
 
             app.Run();
-            }
+        }
     }
-    }
+}
