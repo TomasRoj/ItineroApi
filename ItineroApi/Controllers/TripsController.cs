@@ -1,6 +1,9 @@
 ﻿using ItineroApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace ItineroApi.Controllers
 {
@@ -9,18 +12,31 @@ namespace ItineroApi.Controllers
     [Route("api/[controller]")]
     public class TripsController : ControllerBase
     {
-            private MyContext context = new MyContext();
+        private MyContext context = new MyContext();
+
+        //GET: api/trips
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Trip>>> GetTrips()
+        {
+            return context.Trips.ToList();
+        }
+
+        [HttpGet("user/{userId}")]
+        public async Task<ActionResult<IEnumerable<Trip>>> GetTripsByUserId(int userId)
+        {
+            var trips = await context.Trips
+                .Where(t => t.creator_id == userId)
+                .ToListAsync();
+
+            Console.WriteLine($"Nalezeno {trips.Count} tripů");
 
 
-            // GET: api/trips
-            [HttpGet]
-            public async Task<ActionResult<IEnumerable<Trip>>> GetTrips()
-            {
-                return  context.Trips.ToList();
-            }
+            return Ok(trips);
+        }
 
-            // GET: api/trips/5
-            [HttpGet("{id}")]
+
+        // GET: api/trips/5
+        [HttpGet("{id}")]
             public async Task<ActionResult<Trip>> GetTrip(int id)
             {
                 var trip = await context.Trips.FindAsync(id);
