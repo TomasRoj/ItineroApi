@@ -7,6 +7,7 @@ namespace ItineroApi
     {
         public DbSet<Trip> Trips { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Friend> Friends { get; set; }
         public DbSet<Attraction> Attractions { get; set; }
         public DbSet<City> Cities { get; set; }
         public DbSet<CustomDestination> CustomDestinations { get; set; }
