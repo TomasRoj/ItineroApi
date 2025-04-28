@@ -26,11 +26,24 @@ namespace ItineroApi.Controllers
             return member;
         }
 
-        [HttpPost]
-        public async Task<ActionResult<TripMember>> Create(TripMember member)
+        [HttpPost("{tripId}")]
+        public async Task<ActionResult<TripMember>> Create(int tripId, TripMember member)
         {
+            member.trip_id = tripId;
+
+            if (member.joined_at == default)
+            {
+                member.joined_at = DateOnly.FromDateTime(DateTime.UtcNow);
+            }
+
+            var tripExists = await _context.Trips.AnyAsync(t => t.Id == tripId);
+            if (!tripExists)
+            {
+                return NotFound($"Trip with ID {tripId} not found");
+            }
             _context.TripMember.Add(member);
             await _context.SaveChangesAsync();
+
             return CreatedAtAction(nameof(Get), new { id = member.id }, member);
         }
 
