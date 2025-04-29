@@ -45,5 +45,21 @@ namespace ItineroApi.Controllers
             return NoContent();
         }
 
+        [HttpGet("for-member/{userId}")]
+        public async Task<ActionResult<IEnumerable<Trip>>> GetTripsForMember(int userId)
+        {
+            var tripIds = await _context.TripMembers
+                .Where(tm => tm.user_id == userId)
+                .Select(tm => tm.trip_id)
+                .ToListAsync();
+
+            var trips = await _context.Trips
+                .Where(t => tripIds.Contains(t.Id))
+                .ToListAsync();
+
+            return trips;
+        }
+
+
     }
 }
