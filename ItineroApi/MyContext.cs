@@ -16,7 +16,7 @@ namespace ItineroApi
         public DbSet<ExpenseSplit> ExpenseSplit { get; set; }
         public DbSet<ItineraryDay> ItineraryDay { get; set; }
         public DbSet<ItineraryItem> ItineraryItem { get; set; }
-        public DbSet<TripMember> TripMember { get; set; }
+        public DbSet<TripMember> TripMembers { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

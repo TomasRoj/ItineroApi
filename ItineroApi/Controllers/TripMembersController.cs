@@ -10,73 +10,40 @@ namespace ItineroApi.Controllers
     {
         private MyContext _context = new MyContext();
 
-
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TripMember>>> GetAll()
         {
-            return await _context.TripMember.ToListAsync();
+            return await _context.TripMembers.ToListAsync();
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<TripMember>> Get(int id)
+        public async Task<ActionResult<TripMember>> GetById(int id)
         {
-            var member = await _context.TripMember.FindAsync(id);
-            if (member == null)
-                return NotFound();
+            var member = await _context.TripMembers.FindAsync(id);
+            if (member == null) return NotFound();
             return member;
         }
 
-        [HttpPost("{tripId}")]
-        public async Task<ActionResult<TripMember>> Create(int tripId, TripMember member)
+        [HttpPost]
+        public async Task<ActionResult<TripMember>> AddTripMember([FromBody] TripMember tripMember)
         {
-            member.trip_id = tripId;
-
-            if (member.joined_at == default)
-            {
-                member.joined_at = DateOnly.FromDateTime(DateTime.UtcNow);
-            }
-
-            var tripExists = await _context.Trips.AnyAsync(t => t.Id == tripId);
-            if (!tripExists)
-            {
-                return NotFound($"Trip with ID {tripId} not found");
-            }
-            _context.TripMember.Add(member);
+            // Volitelná kontrola existence tripu a uživatele
+            _context.TripMembers.Add(tripMember);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(Get), new { id = member.id }, member);
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, TripMember member)
-        {
-            if (id != member.id)
-                return BadRequest();
-
-            _context.Entry(member).State = EntityState.Modified;
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await _context.TripMember.AnyAsync(e => e.id == id))
-                    return NotFound();
-                throw;
-            }
-            return NoContent();
+            return CreatedAtAction(nameof(GetById), new { id = tripMember.Id }, tripMember);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var member = await _context.TripMember.FindAsync(id);
-            if (member == null)
-                return NotFound();
+            var member = await _context.TripMembers.FindAsync(id);
+            if (member == null) return NotFound();
 
-            _context.TripMember.Remove(member);
+            _context.TripMembers.Remove(member);
             await _context.SaveChangesAsync();
             return NoContent();
         }
+
     }
 }
