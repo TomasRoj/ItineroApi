@@ -24,6 +24,17 @@ namespace ItineroApi.Controllers
             return member;
         }
 
+        [HttpGet("for-trip/{tripId}")]
+        public async Task<ActionResult<IEnumerable<TripMember>>> GetMembersForTrip(int tripId)
+        {
+            var members = await _context.TripMembers
+                .Where(tm => tm.trip_id == tripId)
+                .ToListAsync();
+
+            return Ok(members);
+        }
+
+
         [HttpPost]
         public async Task<ActionResult<TripMember>> AddTripMember([FromBody] TripMember tripMember)
         {
