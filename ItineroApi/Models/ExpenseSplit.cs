@@ -11,5 +11,6 @@ namespace ItineroApi.Models
         public decimal Amount { get; set; }
         public bool IsSettled { get; set; }
         public DateTime? SettledAt { get; set; }
+        public int trip_ID {  get; set; } 
     }
 }

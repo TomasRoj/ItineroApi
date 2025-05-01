@@ -10,12 +10,14 @@ namespace ItineroApi.Controllers
     {
         private MyContext _context = new MyContext();
 
+        // GET: api/expensesplits
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ExpenseSplit>>> GetAll()
         {
             return await _context.ExpenseSplit.ToListAsync();
         }
 
+        // GET: api/expensesplits/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ExpenseSplit>> Get(int id)
         {
@@ -25,6 +27,34 @@ namespace ItineroApi.Controllers
             return split;
         }
 
+        // GET: api/expensesplits/expense/5
+        [HttpGet("expense/{expenseId}")]
+        public async Task<ActionResult<IEnumerable<ExpenseSplit>>> GetByExpenseId(int expenseId)
+        {
+            return await _context.ExpenseSplit
+                .Where(s => s.ExpenseId == expenseId)
+                .ToListAsync();
+        }
+
+        // GET: api/expensesplits/user/5
+        [HttpGet("user/{userId}")]
+        public async Task<ActionResult<IEnumerable<ExpenseSplit>>> GetByUserId(int userId)
+        {
+            return await _context.ExpenseSplit
+                .Where(s => s.UserId == userId)
+                .ToListAsync();
+        }
+
+        // GET: api/expensesplits/trip/5
+        [HttpGet("trip/{tripId}")]
+        public async Task<ActionResult<IEnumerable<ExpenseSplit>>> GetByTripId(int tripId)
+        {
+            return await _context.ExpenseSplit
+                .Where(s => s.trip_ID == tripId)
+                .ToListAsync();
+        }
+
+        // POST: api/expensesplits
         [HttpPost]
         public async Task<ActionResult<ExpenseSplit>> Create(ExpenseSplit split)
         {
@@ -33,6 +63,7 @@ namespace ItineroApi.Controllers
             return CreatedAtAction(nameof(Get), new { id = split.Id }, split);
         }
 
+        // PUT: api/expensesplits/5
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, ExpenseSplit split)
         {
@@ -53,6 +84,29 @@ namespace ItineroApi.Controllers
             return NoContent();
         }
 
+        // PUT: api/expensesplits/settleexpense/5
+        [HttpPut("settleexpense/{expenseId}")]
+        public async Task<IActionResult> SettleExpense(int expenseId)
+        {
+            var splits = await _context.ExpenseSplit
+                .Where(s => s.ExpenseId == expenseId)
+                .ToListAsync();
+
+            if (!splits.Any())
+                return NotFound();
+
+            foreach (var split in splits)
+            {
+                split.IsSettled = true;
+                split.SettledAt = DateTime.UtcNow;
+                _context.Entry(split).State = EntityState.Modified;
+            }
+
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+
+        // DELETE: api/expensesplits/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -65,5 +119,4 @@ namespace ItineroApi.Controllers
             return NoContent();
         }
     }
-
 }

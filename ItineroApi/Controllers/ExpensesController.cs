@@ -14,33 +14,57 @@ namespace ItineroApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Expense>>> GetAll()
         {
-            return await _context.Expenses
-                .Include(e => e.CategoryId)
-                .Include(e => e.TripId)
-                .Include(e => e.PaidByUserId)
-                .ToListAsync();
+            return await _context.Expenses.ToListAsync();
         }
 
         // GET: api/expenses/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Expense>> Get(int id)
         {
-            var expense = await _context.Expenses
-                .Include(e => e.CategoryId)
-                .Include(e => e.TripId)
-                .Include(e => e.PaidByUserId)
-                .FirstOrDefaultAsync(e => e.Id == id);
-
+            var expense = await _context.Expenses.FirstOrDefaultAsync(e => e.Id == id);
             if (expense == null)
                 return NotFound();
-
             return expense;
+        }
+
+        // GET: api/expenses/trip/5
+        [HttpGet("trip/{tripId}")]
+        public async Task<ActionResult<IEnumerable<Expense>>> GetByTripId(int tripId)
+        {
+            return await _context.Expenses
+                .Where(e => e.TripId == tripId)
+                .OrderByDescending(e => e.Date)
+                .ToListAsync();
+        }
+
+        // GET: api/expenses/user/5
+        [HttpGet("user/{userId}")]
+        public async Task<ActionResult<IEnumerable<Expense>>> GetByUserId(int userId)
+        {
+            return await _context.Expenses
+                .Where(e => e.PaidByUserId == userId)
+                .OrderByDescending(e => e.Date)
+                .ToListAsync();
+        }
+
+        // GET: api/expenses/category/5
+        [HttpGet("category/{categoryId}")]
+        public async Task<ActionResult<IEnumerable<Expense>>> GetByCategoryId(int categoryId)
+        {
+            return await _context.Expenses
+                .Where(e => e.CategoryId == categoryId)
+                .OrderByDescending(e => e.Date)
+                .ToListAsync();
         }
 
         // POST: api/expenses
         [HttpPost]
         public async Task<ActionResult<Expense>> Create(Expense expense)
         {
+            // Set created and updated timestamps
+            expense.CreatedAt = DateTime.UtcNow;
+            expense.UpdatedAt = DateTime.UtcNow;
+
             _context.Expenses.Add(expense);
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(Get), new { id = expense.Id }, expense);
@@ -53,8 +77,10 @@ namespace ItineroApi.Controllers
             if (id != expense.Id)
                 return BadRequest();
 
-            _context.Entry(expense).State = EntityState.Modified;
+            // Update the timestamp
+            expense.UpdatedAt = DateTime.UtcNow;
 
+            _context.Entry(expense).State = EntityState.Modified;
             try
             {
                 await _context.SaveChangesAsync();
@@ -65,7 +91,6 @@ namespace ItineroApi.Controllers
                     return NotFound();
                 throw;
             }
-
             return NoContent();
         }
 
@@ -77,11 +102,13 @@ namespace ItineroApi.Controllers
             if (expense == null)
                 return NotFound();
 
+            // First delete related expense splits
+            var relatedSplits = await _context.ExpenseSplit.Where(s => s.ExpenseId == id).ToListAsync();
+            _context.ExpenseSplit.RemoveRange(relatedSplits);
+
             _context.Expenses.Remove(expense);
             await _context.SaveChangesAsync();
-
             return NoContent();
         }
     }
-
 }
