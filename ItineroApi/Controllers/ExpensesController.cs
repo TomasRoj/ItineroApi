@@ -102,7 +102,6 @@ namespace ItineroApi.Controllers
             if (expense == null)
                 return NotFound();
 
-            // First delete related expense splits
             var relatedSplits = await _context.ExpenseSplit.Where(s => s.ExpenseId == id).ToListAsync();
             _context.ExpenseSplit.RemoveRange(relatedSplits);
 
