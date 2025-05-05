@@ -32,7 +32,7 @@ namespace ItineroApi.Controllers
         public async Task<ActionResult<IEnumerable<Expense>>> GetByTripId(int tripId)
         {
             return await _context.Expenses
-                .Where(e => e.TripId == tripId)
+                .Where(e => e.Trip_Id == tripId)
                 .OrderByDescending(e => e.Date)
                 .ToListAsync();
         }
@@ -42,7 +42,7 @@ namespace ItineroApi.Controllers
         public async Task<ActionResult<IEnumerable<Expense>>> GetByUserId(int userId)
         {
             return await _context.Expenses
-                .Where(e => e.PaidByUserId == userId)
+                .Where(e => e.paid_by_user_id == userId)
                 .OrderByDescending(e => e.Date)
                 .ToListAsync();
         }
@@ -52,7 +52,7 @@ namespace ItineroApi.Controllers
         public async Task<ActionResult<IEnumerable<Expense>>> GetByCategoryId(int categoryId)
         {
             return await _context.Expenses
-                .Where(e => e.CategoryId == categoryId)
+                .Where(e => e.Category_Id == categoryId)
                 .OrderByDescending(e => e.Date)
                 .ToListAsync();
         }
@@ -62,8 +62,8 @@ namespace ItineroApi.Controllers
         public async Task<ActionResult<Expense>> Create(Expense expense)
         {
             // Set created and updated timestamps
-            expense.CreatedAt = DateTime.UtcNow;
-            expense.UpdatedAt = DateTime.UtcNow;
+            expense.Created_At = DateTime.UtcNow;
+            expense.Updated_At = DateTime.UtcNow;
 
             _context.Expenses.Add(expense);
             await _context.SaveChangesAsync();
@@ -78,7 +78,7 @@ namespace ItineroApi.Controllers
                 return BadRequest();
 
             // Update the timestamp
-            expense.UpdatedAt = DateTime.UtcNow;
+            expense.Updated_At = DateTime.UtcNow;
 
             _context.Entry(expense).State = EntityState.Modified;
             try

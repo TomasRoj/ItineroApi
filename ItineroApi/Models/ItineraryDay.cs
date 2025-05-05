@@ -7,7 +7,7 @@ namespace ItineroApi.Models
     {
         public int Id { get; set; }
         public int trip_id { get; set; }
-        public DateOnly date { get; set; }
+        public DateTime date { get; set; }
         public string? description { get; set; }  
     }
 }

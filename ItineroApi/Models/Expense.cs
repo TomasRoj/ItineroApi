@@ -7,15 +7,15 @@ namespace ItineroApi.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public int TripId { get; set; }
-        public int? CategoryId { get; set; }
-        public int PaidByUserId { get; set; }
+        public int Trip_Id { get; set; }
+        public int? Category_Id { get; set; }
+        public int paid_by_user_id { get; set; }
         public decimal Amount { get; set; }
-        public string CurrencyCode { get; set; }
+        public string Currency_Code { get; set; }
         public string Description { get; set; }
         public DateTime Date { get; set; }
-        public string ReceiptImage { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
+        public string? Receipt_image { get; set; }
+        public DateTime Created_At { get; set; }
+        public DateTime Updated_At { get; set; }
     }
 }
