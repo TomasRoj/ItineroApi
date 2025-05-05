@@ -32,7 +32,7 @@ namespace ItineroApi.Controllers
         public async Task<ActionResult<IEnumerable<ExpenseSplit>>> GetByExpenseId(int expenseId)
         {
             return await _context.ExpenseSplit
-                .Where(s => s.ExpenseId == expenseId)
+                .Where(s => s.Expense_id == expenseId)
                 .ToListAsync();
         }
 
@@ -89,7 +89,7 @@ namespace ItineroApi.Controllers
         public async Task<IActionResult> SettleExpense(int expenseId)
         {
             var splits = await _context.ExpenseSplit
-                .Where(s => s.ExpenseId == expenseId)
+                .Where(s => s.Expense_id == expenseId)
                 .ToListAsync();
 
             if (!splits.Any())

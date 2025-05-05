@@ -6,7 +6,7 @@ namespace ItineroApi.Models
     public class ExpenseSplit
     {
         public int Id { get; set; }
-        public int ExpenseId { get; set; }
+        public int Expense_id { get; set; }
         public int UserId { get; set; }
         public decimal Amount { get; set; }
         public bool IsSettled { get; set; }
