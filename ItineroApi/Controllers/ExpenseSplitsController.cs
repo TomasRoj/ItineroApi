@@ -41,7 +41,7 @@ namespace ItineroApi.Controllers
         public async Task<ActionResult<IEnumerable<ExpenseSplit>>> GetByUserId(int userId)
         {
             return await _context.ExpenseSplit
-                .Where(s => s.UserId == userId)
+                .Where(s => s.User_Id == userId)
                 .ToListAsync();
         }
 
@@ -97,8 +97,8 @@ namespace ItineroApi.Controllers
 
             foreach (var split in splits)
             {
-                split.IsSettled = true;
-                split.SettledAt = DateTime.UtcNow;
+                split.Is_Settled = true;
+                split.Settled_At = DateTime.UtcNow;
                 _context.Entry(split).State = EntityState.Modified;
             }
 

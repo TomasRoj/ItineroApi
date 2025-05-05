@@ -7,10 +7,10 @@ namespace ItineroApi.Models
     {
         public int Id { get; set; }
         public int Expense_id { get; set; }
-        public int UserId { get; set; }
+        public int User_Id { get; set; }
         public decimal Amount { get; set; }
-        public bool IsSettled { get; set; }
-        public DateTime? SettledAt { get; set; }
+        public bool Is_Settled { get; set; }
+        public DateTime? Settled_At { get; set; }
         public int trip_ID {  get; set; } 
     }
 }
