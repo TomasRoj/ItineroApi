@@ -5,17 +5,17 @@ namespace ItineroApi.Models
     [Table("itinerary_items")]
     public class ItineraryItem
     {
-        public int Id { get; set; }
-        public int ItineraryDayId { get; set; }
-        public int? AttractionId { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public string CustomLocation { get; set; }
-        public decimal? Latitude { get; set; }
-        public decimal? Longitude { get; set; }
-        public string EstimatedTime { get; set; }
-        public int? SortOrder { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
+        public int id { get; set; }
+        public int itinerary_day_id { get; set; }
+        public int? attraction_id { get; set; }
+        public string name { get; set; }
+        public string description { get; set; }
+        public string custom_location { get; set; }
+        public decimal? latitude { get; set; }
+        public decimal? longitude { get; set; }
+        public string estimatedtime { get; set; }
+        public int? sort_order { get; set; }
+        public DateTime Created_at { get; set; }
+        public DateTime Updated_at { get; set; }
     }
 }

@@ -85,7 +85,7 @@ namespace ItineroApi.Controllers
         public async Task<ActionResult<IEnumerable<ItineraryItem>>> GetItems([FromQuery] int dayId)
         {
             return await _context.ItineraryItem
-                .Where(i => i.ItineraryDayId == dayId)
+                .Where(i => i.itinerary_day_id == dayId)
                 .ToListAsync();
         }
 
@@ -106,14 +106,14 @@ namespace ItineroApi.Controllers
         {
             _context.ItineraryItem.Add(item);
             await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetItem), new { id = item.Id }, item);
+            return CreatedAtAction(nameof(GetItem), new { id = item.id }, item);
         }
 
         // PUT: api/itinerary/item/5
         [HttpPut("item/{id}")]
         public async Task<IActionResult> UpdateItem(int id, ItineraryItem item)
         {
-            if (id != item.Id)
+            if (id != item.id)
                 return BadRequest();
 
             _context.Entry(item).State = EntityState.Modified;
@@ -124,7 +124,7 @@ namespace ItineroApi.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await _context.ItineraryItem.AnyAsync(i => i.Id == id))
+                if (!await _context.ItineraryItem.AnyAsync(i => i.id == id))
                     return NotFound();
                 throw;
             }
