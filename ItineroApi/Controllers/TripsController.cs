@@ -28,9 +28,6 @@ namespace ItineroApi.Controllers
                 .Where(t => t.creator_id == userId)
                 .ToListAsync();
 
-            Console.WriteLine($"Nalezeno {trips.Count} tripů");
-
-
             return Ok(trips);
         }
 

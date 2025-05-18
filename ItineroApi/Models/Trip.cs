@@ -15,5 +15,6 @@ namespace ItineroApi.Models
         public bool Is_public { get; set; } = false;
         public DateTime created_at { get; set; } = DateTime.UtcNow;
         public DateTime updated_at { get; set; } = DateTime.UtcNow;
+        public string? photoURL { get; set; } = null;
     }
 }
