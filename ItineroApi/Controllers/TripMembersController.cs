@@ -71,6 +71,33 @@ namespace ItineroApi.Controllers
             return trips;
         }
 
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateTripMember(int id, [FromBody] TripMember updatedMember)
+        {
+            if (id != updatedMember.Id)
+                return BadRequest("ID mismatch");
+
+            var existingMember = await _context.TripMembers.FindAsync(id);
+            if (existingMember == null)
+                return NotFound();
+
+            // Optional: Validate that the referenced trip and user still exist
+            var tripExists = await _context.Trips.AnyAsync(t => t.Id == updatedMember.trip_id);
+            var userExists = await _context.Users.AnyAsync(u => u.Id == updatedMember.user_id); // assumes `Users` table
+
+            if (!tripExists || !userExists)
+                return BadRequest("Invalid trip_id or user_id");
+
+            // Update allowed fields
+            existingMember.trip_id = updatedMember.trip_id;
+            existingMember.user_id = updatedMember.user_id;
+            existingMember.Role = updatedMember.Role;
+            existingMember.joined_at = updatedMember.joined_at;
+
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+
 
     }
 }
