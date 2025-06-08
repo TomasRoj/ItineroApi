@@ -38,6 +38,7 @@ namespace ItineroApi.Controllers
                 return StatusCode(500, "An error occurred while retrieving expenses");
             }
         }
+        
 
         // GET: api/expenses/5
         [HttpGet("{id}")]

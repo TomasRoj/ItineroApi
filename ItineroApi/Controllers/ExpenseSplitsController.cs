@@ -127,6 +127,66 @@ namespace ItineroApi.Controllers
             }
         }
 
+        // PUT: api/ExpenseSplits/SettleExpense/5
+        [HttpPut("SettleExpense/{expenseId}")]
+        public async Task<IActionResult> SettleExpenseSplits(int expenseId)
+        {
+            var splits = await _context.ExpenseSplit
+                .Where(s => s.Expense_id == expenseId && !s.Is_Settled)  // Find UNSETTLED splits
+                .ToListAsync();
+
+            if (!splits.Any())
+            {
+                return BadRequest("No unsettled splits found for this expense");
+            }
+
+            foreach (var split in splits)
+            {
+                split.Is_Settled = true;
+                split.Settled_At = DateTime.UtcNow;
+            }
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                return NoContent();
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Failed to settle expense splits: {ex.InnerException?.Message ?? ex.Message}");
+            }
+        }
+
+        // PUT: api/ExpenseSplits/UnsettleExpense/5
+        [HttpPut("UnsettleExpense/{expenseId}")]
+        public async Task<IActionResult> UnsettleExpenseSplits(int expenseId)
+        {
+            var splits = await _context.ExpenseSplit
+                .Where(s => s.Expense_id == expenseId && s.Is_Settled)  // Find SETTLED splits
+                .ToListAsync();
+
+            if (!splits.Any())
+            {
+                return BadRequest("No settled splits found for this expense");
+            }
+
+            foreach (var split in splits)
+            {
+                split.Is_Settled = false;
+                split.Settled_At = null;
+            }
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                return NoContent();
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Failed to unsettle expense splits: {ex.InnerException?.Message ?? ex.Message}");
+            }
+        }
+
         // PUT: api/ExpenseSplits/5
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateExpenseSplit(int id, ExpenseSplit split)
@@ -164,36 +224,6 @@ namespace ItineroApi.Controllers
             }
         }
 
-        // PUT: api/ExpenseSplits/SettleExpense/5
-        [HttpPut("SettleExpense/{expenseId}")]
-        public async Task<IActionResult> SettleExpenseSplits(int expenseId)
-        {
-            var splits = await _context.ExpenseSplit
-                .Where(s => s.Expense_id == expenseId && !s.Is_Settled)
-                .ToListAsync();
-
-            if (!splits.Any())
-            {
-                return NotFound("No unsettled splits found for this expense");
-            }
-
-            foreach (var split in splits)
-            {
-                split.Is_Settled = true;
-                split.Settled_At = DateTime.UtcNow;
-            }
-
-            try
-            {
-                await _context.SaveChangesAsync();
-                return NoContent();
-            }
-            catch (DbUpdateException ex)
-            {
-                return StatusCode(500, $"Failed to settle expense splits: {ex.InnerException?.Message ?? ex.Message}");
-            }
-        }
-
         // DELETE: api/ExpenseSplits/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteExpenseSplit(int id)
@@ -221,6 +251,7 @@ namespace ItineroApi.Controllers
         {
             return _context.ExpenseSplit.Any(e => e.Id == id);
         }
+
     }
 
     public class CreateMultipleExpenseSplitsRequest
